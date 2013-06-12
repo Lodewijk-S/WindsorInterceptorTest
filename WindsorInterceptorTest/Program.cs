@@ -20,9 +20,9 @@ namespace WindsorInterceptorTest
             {
                 container.Register(
                     Component.For<ScopeInterceptor>(),
-                    Component.For<Engine>().Interceptors<ScopeInterceptor>());
+                    Component.For<Engine>().Forward<IEngine>().Interceptors<ScopeInterceptor>());
 
-                var engine = container.Resolve<Engine>();
+                var engine = container.Resolve<IEngine>();
 
                 engine.Handle(r => Console.WriteLine(r));
             }
