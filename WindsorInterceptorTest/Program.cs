@@ -20,7 +20,7 @@ namespace WindsorInterceptorTest
             {
                 container.Register(
                     Component.For<ScopeInterceptor>(),
-                    Component.For<Engine>().Forward<IEngine>().Interceptors<ScopeInterceptor>());
+                    Component.For<MyEngine>().Forward<IEngine>().Interceptors<ScopeInterceptor>());
 
                 var engine = container.Resolve<IEngine>();
 
@@ -39,16 +39,29 @@ namespace WindsorInterceptorTest
 
     public class Engine : IEngine
     {
-        public virtual string Handle(string input) 
+        public string Handle(string input) 
         {
             return input;
         }
 
-        public virtual void Handle(Action<string> oncomplete)
+        public void Handle(Action<string> oncomplete)
         {   
             //ThreadPool.QueueUserWorkItem(x => {
                 oncomplete(Handle("test"));
             //});
+        }
+    }
+
+    public class MyEngine : Engine, IEngine
+    {
+        public virtual new string Handle(string input)
+        {
+            return base.Handle(input);
+        }
+
+        public virtual new void Handle(Action<string> oncomplete)
+        {
+            oncomplete(Handle("test"));
         }
     }
 
