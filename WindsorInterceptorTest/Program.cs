@@ -19,10 +19,10 @@ namespace WindsorInterceptorTest
             using (var container = new WindsorContainer())
             {
                 container.Register(
-                    Component.For<ScopeInterceptor>(), 
-                    Component.For<IEngine>().ImplementedBy<Engine>().Interceptors<ScopeInterceptor>());
+                    Component.For<ScopeInterceptor>(),
+                    Component.For<Engine>().Interceptors<ScopeInterceptor>());
 
-                var engine = container.Resolve<IEngine>();
+                var engine = container.Resolve<Engine>();
 
                 engine.Handle(r => Console.WriteLine(r));
             }
@@ -39,12 +39,12 @@ namespace WindsorInterceptorTest
 
     public class Engine : IEngine
     {
-        public string Handle(string input) 
+        public virtual string Handle(string input) 
         {
             return input;
         }
 
-        public void Handle(Action<string> oncomplete)
+        public virtual void Handle(Action<string> oncomplete)
         {   
             //ThreadPool.QueueUserWorkItem(x => {
                 oncomplete(Handle("test"));
