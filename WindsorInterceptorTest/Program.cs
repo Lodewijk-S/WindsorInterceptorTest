@@ -20,9 +20,7 @@ namespace WindsorInterceptorTest
             {
                 container.Register(
                     Component.For<ScopeInterceptor>(), 
-                    Component.For<IEngine>().ImplementedBy<Engine>());
-
-                container.Kernel.ProxyFactory.AddInterceptorSelector(new ScopeSelector());
+                    Component.For<IEngine>().ImplementedBy<Engine>().Interceptors<ScopeInterceptor>());
 
                 var engine = container.Resolve<IEngine>();
 
@@ -47,26 +45,14 @@ namespace WindsorInterceptorTest
         }
 
         public void Handle(Action<string> oncomplete)
-        {
-           ThreadPool.QueueUserWorkItem(x => {
+        {   
+            //ThreadPool.QueueUserWorkItem(x => {
                 oncomplete(Handle("test"));
-            });
+            //});
         }
     }
 
-    public class ScopeSelector : IModelInterceptorsSelector
-    {
-        public bool HasInterceptors(Castle.Core.ComponentModel model)
-        {
-            return model.Implementation == typeof(Engine);
-        }
-
-        public Castle.Core.InterceptorReference[] SelectInterceptors(Castle.Core.ComponentModel model, Castle.Core.InterceptorReference[] interceptors)
-        {
-            return new[] { InterceptorReference.ForType<ScopeInterceptor>() };
-        }
-    }
-
+    [Serializable]
     public class ScopeInterceptor : IInterceptor
     {
         public void Intercept(IInvocation invocation)
